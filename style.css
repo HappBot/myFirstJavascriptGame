@@ -4,10 +4,11 @@
 }
 
 body {
-    display: flex;
-    flex-direction: column;
     height: 100vh;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
 }
 
 header {
@@ -35,8 +36,8 @@ canvas {
     border-bottom: solid forestgreen 20px;
     border-left: solid rgba(255, 95, 2, 0.925) 20px;
     border-top: solid gray 10px;
-
     order: 1;
+
 }
 
 footer {

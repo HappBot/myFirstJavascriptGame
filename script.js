@@ -8,7 +8,7 @@ function startGame () {
     
     // Character
     myGamePiece = new component(30, 30, "black", 10, 120);
-    myScore = new component("20px", "Arial", "black", 340, 20, "text");
+    myScore = new component("20px", "Arial", "black", 5, 20, "text");
     myGameArea.start();
 }
 
@@ -18,10 +18,10 @@ var myGameArea = {
     start : function () {
 
         // Creating canvas on HTML
-        this.canvas.width = 480;
-        this.canvas.height = 270;
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = 400;
         this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]); // inserting canvas on the beginning of the HTML
+        document.body.insertBefore(this.canvas, document.body.childNodes[6]); // inserting canvas on the beginning of the HTML
 
         // Starting count of frame number at the beginning of the game
         this.frameNo = 0;
@@ -40,7 +40,7 @@ var myGameArea = {
         this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
     },
     stop : function() {
-        stopMessage = new component("50px", "Arial", "black", 140, 140, "text");
+        stopMessage = new component("50px", "Arial", "black", myGamePiece.x+myGamePiece.width, myGamePiece.y+myGamePiece.height, "text");
         stopMessage.text = "You Died";
         stopMessage.update();
         clearInterval(this.interval);
@@ -92,7 +92,6 @@ function component(width, height, color, x, y, type) {
         if (this.y > rockBottom) {
             this.y = rockBottom;
             this.gravitySpeed = -(this.gravitySpeed*this.bounce + this.speedY);
-
         }
     }
 
@@ -176,11 +175,26 @@ function updateGameArea() {
     myGamePiece.speedY = 0;
 
     // Movement control
-    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -2; };
-    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 2; };
+    if (myGameArea.keys && myGameArea.keys[37]) {
+        myGamePiece.speedX = -2; 
+        myThrustLeft = new component(10, 30, "blue", myGamePiece.x + myGamePiece.width - 5, myGamePiece.y);
+        myThrustLeft.update();
+    };
+    if (myGameArea.keys && myGameArea.keys[39]) {
+        myGamePiece.speedX = 2;
+        myThrustRight = new component(10, 30, "blue", myGamePiece.x - 5, myGamePiece.y);
+        myThrustRight.update();
+    };
     if (myGameArea.keys && myGameArea.keys[38]) {
-        myGamePiece.speedY = -1};
-    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 2; };
+        myGamePiece.speedY = -2; 
+        myThrustUp = new component(30, 10, "blue", myGamePiece.x, myGamePiece.y + myGamePiece.height - 5);
+        myThrustUp.update();
+    };
+    if (myGameArea.keys && myGameArea.keys[40]) {
+        myGamePiece.speedY = 2;
+        myThrustDown = new component(30, 10, "blue", myGamePiece.x, myGamePiece.y - 5);
+        myThrustDown.update();
+    };
 
     myScore.text = "SCORE: " + myGameArea.frameNo;
     myScore.update();
