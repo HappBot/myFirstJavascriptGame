@@ -9,6 +9,10 @@ function startGame () {
     // Character
     myGamePiece = new component(30, 30, "black", 10, 120);
     myScore = new component("20px", "Arial", "black", 5, 20, "text");
+    myUpBtn = new component(30, 30, "blue", 50, 30);
+    myDownBtn = new component(30, 30, "blue", 50, 90);
+    myLeftBtn = new component(30, 30, "blue", 20, 60);
+    myRightBtn = new component(30, 30, "blue", 80, 60);
     myGameArea.start();
 }
 
@@ -34,7 +38,23 @@ var myGameArea = {
         });
         window.addEventListener('keyup', function(e) {
             myGameArea.keys[e.keyCode] = false;
-        })
+        });
+        window.addEventListener('mousedown', function (e) {
+            myGameArea.x = e.pageX;
+            myGameArea.y = e.pageY;
+        });
+        window.addEventListener('mouseup', function (e) {
+        myGameArea.x = false;
+        myGameArea.y = false;
+        });
+        window.addEventListener('touchstart', function (e) {
+        myGameArea.x = e.pageX;
+        myGameArea.y = e.pageY;
+        });
+        window.addEventListener('touchend', function (e) {
+        myGameArea.x = false;
+        myGameArea.y = false;
+        });
     },
     clear : function() {
         this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
@@ -81,6 +101,17 @@ function component(width, height, color, x, y, type) {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         }
     };
+    this.clicked = function() {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var clicked = true;
+        if ((mybottom < myGameArea.y) || (mytop > myGameArea.y) || (myright < myGameArea.x) || (myleft > myGameArea.x)) {
+          clicked = false;
+        }
+        return clicked;
+    };
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
         this.x += this.speedX;
@@ -93,7 +124,7 @@ function component(width, height, color, x, y, type) {
             this.y = rockBottom;
             this.gravitySpeed = -(this.gravitySpeed*this.bounce + this.speedY);
         }
-    }
+    };
 
     // Checking if the character crashes with other objects
     this.crashWith = function(otherobj) {
@@ -146,6 +177,7 @@ function updateGameArea() {
     // Creating Obstacles
     if (myGameArea.frameNo == 1 || everyinterval(150)) {
         x = myGameArea.canvas.width;
+        y = myGameArea.canvas.height;
         
         // random height
         minHeight = 20;
@@ -153,15 +185,15 @@ function updateGameArea() {
         height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
 
         // vertical distance between obstacles
-        minGap = 50;
-        maxGap = 150;
+        minGap = 75;
+        maxGap = 200;
         gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
 
         // Top Obstacles
         myObstacles.push(new component(50, height, "gray", x, 0));
 
         // Bottom Obstacles
-        myObstacles.push(new component(10, x - height - gap, "darkred", x, height + gap));
+        myObstacles.push(new component(20, y - height - gap, "darkred", x, height + gap));
     };
 
     // Moving Obstacles
@@ -186,19 +218,44 @@ function updateGameArea() {
         myThrustRight.update();
     };
     if (myGameArea.keys && myGameArea.keys[38]) {
-        myGamePiece.speedY = -2; 
+        myGamePiece.speedY = -3; 
         myThrustUp = new component(30, 10, "blue", myGamePiece.x, myGamePiece.y + myGamePiece.height - 5);
         myThrustUp.update();
     };
     if (myGameArea.keys && myGameArea.keys[40]) {
-        myGamePiece.speedY = 2;
+        myGamePiece.speedY = 3;
         myThrustDown = new component(30, 10, "blue", myGamePiece.x, myGamePiece.y - 5);
         myThrustDown.update();
     };
 
+    // Buttons
+
+    if (myGameArea.x && myGameArea.y) {
+        if (myUpBtn.clicked()) {
+          myGamePiece.y -= 1;
+        }
+        if (myDownBtn.clicked()) {
+          myGamePiece.y += 1;
+        }
+        if (myLeftBtn.clicked()) {
+          myGamePiece.x += -1;
+        }
+        if (myRightBtn.clicked()) {
+          myGamePiece.x += 1;
+        }
+    }
+
+
+    // Score
+
     myScore.text = "SCORE: " + myGameArea.frameNo;
     myScore.update();
 
+
+    myUpBtn.update();
+    myDownBtn.update();
+    myLeftBtn.update();
+    myRightBtn.update();
     myGamePiece.newPos();
     myGamePiece.update();
 }
