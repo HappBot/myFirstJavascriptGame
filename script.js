@@ -9,10 +9,10 @@ function startGame () {
     // Character
     myGamePiece = new component(30, 30, "black", 10, 120);
     myScore = new component("20px", "Arial", "black", 5, 20, "text");
-    myUpBtn = new component(30, 30, "blue", 50, 30);
-    myDownBtn = new component(30, 30, "blue", 50, 90);
-    myLeftBtn = new component(30, 30, "blue", 20, 60);
-    myRightBtn = new component(30, 30, "blue", 80, 60);
+    myUpBtn = new component(30, 30, "blue", 50, 280);
+    myDownBtn = new component(30, 30, "blue", 50, 340);
+    myLeftBtn = new component(30, 30, "blue", 20, 310);
+    myRightBtn = new component(30, 30, "blue", 80, 310);
     myGameArea.start();
 }
 
@@ -40,20 +40,20 @@ var myGameArea = {
             myGameArea.keys[e.keyCode] = false;
         });
         window.addEventListener('mousedown', function (e) {
-            myGameArea.x = e.pageX;
-            myGameArea.y = e.pageY;
+            myGameArea.x = e.pageX - 20;
+            myGameArea.y = e.pageY - document.getElementById("header").offsetHeight;
         });
         window.addEventListener('mouseup', function (e) {
-        myGameArea.x = false;
-        myGameArea.y = false;
+            myGameArea.x = false;
+            myGameArea.y = false;
         });
         window.addEventListener('touchstart', function (e) {
-        myGameArea.x = e.pageX;
-        myGameArea.y = e.pageY;
+            myGameArea.x = e.pageX - 20;
+            myGameArea.y = e.pageY - document.getElementById("header").offsetHeight;
         });
         window.addEventListener('touchend', function (e) {
-        myGameArea.x = false;
-        myGameArea.y = false;
+            myGameArea.x = false;
+            myGameArea.y = false;
         });
     },
     clear : function() {
@@ -232,18 +232,26 @@ function updateGameArea() {
 
     if (myGameArea.x && myGameArea.y) {
         if (myUpBtn.clicked()) {
-          myGamePiece.y -= 1;
+          myGamePiece.y -= 3;
+          myThrustUp = new component(30, 10, "blue", myGamePiece.x, myGamePiece.y + myGamePiece.height - 5);
+          myThrustUp.update();
         }
         if (myDownBtn.clicked()) {
-          myGamePiece.y += 1;
+          myGamePiece.y += 3;
+          myThrustDown = new component(30, 10, "blue", myGamePiece.x, myGamePiece.y - 5);
+          myThrustDown.update();
         }
         if (myLeftBtn.clicked()) {
-          myGamePiece.x += -1;
+          myGamePiece.x += -3;
+          myThrustLeft = new component(10, 30, "blue", myGamePiece.x + myGamePiece.width - 5, myGamePiece.y);
+          myThrustLeft.update();
         }
         if (myRightBtn.clicked()) {
-          myGamePiece.x += 1;
+          myGamePiece.x += 3;
+          myThrustRight = new component(10, 30, "blue", myGamePiece.x - 5, myGamePiece.y);
+          myThrustRight.update();
         }
-    }
+    };
 
 
     // Score
@@ -259,3 +267,7 @@ function updateGameArea() {
     myGamePiece.newPos();
     myGamePiece.update();
 }
+
+console.log("Header Height:" + document.getElementById("header").offsetHeight)
+
+console.log("Canvas Height:" + myGameArea.canvas.border)
